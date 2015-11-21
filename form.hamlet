@@ -1,0 +1,23 @@
+<h1>
+    #{y}
+    $maybe mm <- msg
+        #{mm}
+    <form method=post action=@{x} enctype=#{enctype}>
+        ^{widget}
+        <input type="submit" value=#{val}>
+
+-- y (título do form)
+-- msg (mensagem mostrada para o usuário)
+-- x (rota)
+-- enctype (tem que ter isso)
+-- val (nome do botão)
+
+
+-- # é um interpolador de código haskell
+-- @ é um interpolador de rota, no caso para inserir a página
+-- ^ é um interpolador HTML/WIDGET
+-- $ Maybe (if) ou Forall (for)
+-- _ internacionalização
+-- todo html fica no .hamlet
+-- todo css fica no lucios ou no cassius
+-- todo JS fica no julius
