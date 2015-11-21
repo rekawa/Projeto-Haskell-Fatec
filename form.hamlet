@@ -1,7 +1,9 @@
-<h1>
+<body style="background-color:#575757">
+
+<h1 style="color:#FFFFFF">
     #{y}
     $maybe mm <- msg
         #{mm}
     <form method=post action=@{x} enctype=#{enctype}>
         ^{widget}
-        <input type="submit" value=#{val}>
+        <input type="submit" class="btn btn-info" style="display:block;margin:2px auto; background-color:yellow; color:black; width:200px" value=#{val}>

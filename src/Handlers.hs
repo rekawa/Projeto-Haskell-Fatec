@@ -34,22 +34,32 @@ widgetForm x enctype widget y val = do
 formUsu :: Form Usuario
 formUsu = renderDivs $ Usuario <$>
     areq textField FieldSettings{fsId=Just "hident22",
-                   fsLabel="Usuário",
+                   fsLabel= "",
                    fsTooltip= Nothing,
                    fsName= Nothing,
-                   fsAttrs=[("maxlength","30")]} Nothing <*>
-    areq passwordField "Senha" Nothing
+                   fsAttrs=[("maxlength","30"),("class","form-control"),("style","max-width:200px;display:block;margin:2px auto"),("placeholder","Login")]} Nothing <*>
+    areq passwordField FieldSettings{fsId=Just "hident22",
+                   fsLabel= "",
+                   fsTooltip= Nothing,
+                   fsName= Nothing,
+                   fsAttrs=[("class","form-control"),("style","max-width:200px;display:block;margin:2px auto"),("placeholder","Senha")]} Nothing
 
 getUsuarioR :: Handler Html
 getUsuarioR = do
     (wid,enc) <- generateFormPost formUsu
-    defaultLayout $ widgetForm UsuarioR enc wid "Cadastro de Usuarios" "Cadastrar"
+    defaultLayout $ widgetBootstrap >> widgetForm UsuarioR enc wid "Cadastro de Usuarios" "Cadastrar" >> widgetVoltar
 
 
 ----------------------------------------------------------------------------------------------------------------------------------
 -- mostra imagem
 getImgR :: Handler Html
 getImgR = defaultLayout [whamlet| <img src=@{StaticR empolgou_jpg}> |]
+----------------------------------------------------------------------------------------------------------------------------------
+widgetBootstrap :: Widget
+widgetBootstrap = toWidgetHead [hamlet|
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous">
+|]
 ----------------------------------------------------------------------------------------------------------------------------------
 -- verifica a session para dar mensagem de boas vindas
 getWelcomeR :: Handler Html
@@ -71,7 +81,7 @@ widget1 = [whamlet|
             <ul class="menu">
                 <li><b>HOME</b>
               | <li><a href=#>EXIBIR</a>
-              | <li><a href=@{AdminR}>ADMINISTRAR</a>
+              | <li><a href=@{AdminR}>ADMIN</a>
               | <li><a href=@{ByeR}>SAIR</a>
         <div id="katana">
         <div id="upperinfo">
@@ -89,6 +99,16 @@ widget1 = [whamlet|
             2015 - Desenvolvido por Ana Carolina & Allan Alencar & Yuri Gregorio. Todos os direitos reservados.
 |]
 ----------------------------------------------------------------------------------------------------------------------------------
+-- Widget de Voltar
+
+widgetVoltar :: Widget
+widgetVoltar = [whamlet|
+
+<h1 style="color:#FFFFFF"><a href=@{WelcomeR}>Voltar</a>
+
+|]
+
+----------------------------------------------------------------------------------------------------------------------------------
 -- HTML básico da página do Admin
 widget2 :: Widget
 widget2 = [whamlet|
@@ -100,7 +120,7 @@ widget2 = [whamlet|
         <div id="grayline">
         <div id="menu">
             <ul class="menu">
-                <li><b>HOME</b>
+                <li><b>ADMIN</b>
               | <li><a href=@{UsuarioR}>CADASTRAR</a>
               | <li><a href=@{ListUserR}>LISTAR</a>
               | <li><a href=@{ByeR}>SAIR</a>
@@ -305,7 +325,7 @@ h2{
 getLoginR :: Handler Html
 getLoginR = do
     (wid,enc) <- generateFormPost formUsu
-    defaultLayout $ widgetForm LoginR enc wid "" "Entrar"
+    defaultLayout $ widgetBootstrap >> widgetForm LoginR enc wid "" "Entrar"
 
 postLoginR :: Handler Html
 postLoginR = do
@@ -344,7 +364,11 @@ getListUserR = do
 getByeR :: Handler Html
 getByeR = do
     deleteSession "_ID"
-    defaultLayout [whamlet| BYE! |]
+    defaultLayout [whamlet|
+
+    <head>
+        <meta http-equiv="refresh" content=1;url=@{LoginR}>
+|]
 ----------------------------------------------------------------------------------------------------------------------------------
 -- Página de login do Admin
 getAdminR :: Handler Html
