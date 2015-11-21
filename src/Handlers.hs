@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings, QuasiQuotes,
              TemplateHaskell #-}
- 
+
 module Handlers where
 import Import
 import Yesod
@@ -50,6 +50,12 @@ getWelcomeR = do
      usr <- lookupSession "_ID"
 -- verifica se a sessão ID existe. lookupsession sempre é um maybe, dentro da monad handler
      defaultLayout [whamlet|
+
+
+
+
+
+
         $maybe m <- usr
             <h1> Welcome #{m}
      |]
