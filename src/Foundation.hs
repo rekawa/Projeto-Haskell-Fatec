@@ -53,7 +53,7 @@ isAdmin = do
     return $ case mu of
         Nothing -> AuthenticationRequired
         Just "admin" -> Authorized
-        Just _ -> Unauthorized "Soh o admin acessa aqui!"
+        Just _ -> Unauthorized "Acesso negado. Apenas o administrador pode acessar esta página."
 
 type Form a = Html -> MForm Handler (FormResult a, Widget)
 
