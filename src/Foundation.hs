@@ -22,6 +22,14 @@ Usuario
    pass Text
    deriving Show
 
+Materia
+    nome Text
+
+Classe
+    usuarioId UsuarioId
+    materiaId MateriaId
+    UniqueUsuarioMateria usuarioId materiaId
+
 |]
 
 mkYesodData "Sitio" pRoutes

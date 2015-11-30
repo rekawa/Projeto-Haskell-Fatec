@@ -1,6 +1,6 @@
 <body style="background-color:#575757">
 
-<h1 style="color:#FFFFFF">
+<h1 style="color:#FFFFFF; text-align: center">
     #{y}
     $maybe mm <- msg
         #{mm}

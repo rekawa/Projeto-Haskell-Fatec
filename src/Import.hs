@@ -18,5 +18,8 @@ pRoutes = [parseRoutes|
    / WelcomeR GET
    /bye ByeR GET
    /admin AdminR GET
-
+   /materia MateriaR GET POST
+   /classe ClasseR GET POST
+   /listarclasse ListarClasseR GET
+   /listarmateria ListarMateriaR GET
 |]

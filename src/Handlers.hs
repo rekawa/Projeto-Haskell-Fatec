@@ -23,14 +23,15 @@ mkYesodDispatch "Sitio" pRoutes
 
 
 ----------------------------------------------------------------------------------------------------------------------------------
--- Criação do formulário
+-- Passar parâmetros para a função
 widgetForm :: Route Sitio -> Enctype -> Widget -> Text -> Text -> Widget
 widgetForm x enctype widget y val = do
      msg <- getMessage
      $(whamletFile "form.hamlet")
 -- a linha 27 importa o arquivo nesta parte do código do widget
      toWidget $(luciusFile "teste.lucius")
-
+----------------------------------------------------------------------------------------------------------------------------------
+--Criação do formulário para o Usuario
 formUsu :: Form Usuario
 formUsu = renderDivs $ Usuario <$>
     areq textField FieldSettings{fsId=Just "hident22",
@@ -43,30 +44,115 @@ formUsu = renderDivs $ Usuario <$>
                    fsTooltip= Nothing,
                    fsName= Nothing,
                    fsAttrs=[("class","form-control"),("style","max-width:200px;display:block;margin:2px auto"),("placeholder","Senha")]} Nothing
-
+---------------------------------------------------------------------------------------------------------------------------------
+--Chamar formuário de Usuário
 getUsuarioR :: Handler Html
 getUsuarioR = do
     (wid,enc) <- generateFormPost formUsu
     defaultLayout $ widgetBootstrap >> widgetForm UsuarioR enc wid "Cadastro de Usuarios" "Cadastrar" >> widgetVoltar
 
+----------------------------------------------------------------------------------------------------------------------------------
+--Criação do formulário para o Usuario
+formMat :: Form Materia
+formMat = renderDivs $ Materia <$>
+    areq textField FieldSettings{fsId=Just "hident22",
+                   fsLabel= "",
+                   fsTooltip= Nothing,
+                   fsName= Nothing,
+                   fsAttrs=[("maxlength","30"),("class","form-control"),("style","max-width:200px;display:block;margin:2px auto"),("placeholder","Materia")]} Nothing
 
 ----------------------------------------------------------------------------------------------------------------------------------
--- mostra imagem
+-- Mostra Imagem
 getImgR :: Handler Html
 getImgR = defaultLayout [whamlet| <img src=@{StaticR empolgou_jpg}> |]
 ----------------------------------------------------------------------------------------------------------------------------------
+--Widget do Bootstrap
 widgetBootstrap :: Widget
 widgetBootstrap = toWidgetHead [hamlet|
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous">
 |]
 ----------------------------------------------------------------------------------------------------------------------------------
--- verifica a session para dar mensagem de boas vindas
+-- Verifica a session para dar mensagem de boas vindas
 getWelcomeR :: Handler Html
 getWelcomeR = do
      usr <- lookupSession "_ID"
--- verifica se a sessão ID existe. lookupsession sempre é um maybe, dentro da monad handler
+-- Verifica se a sessão ID existe. lookupsession sempre é um maybe, dentro da monad handler
      defaultLayout (widget1 >> pWidget)
+----------------------------------------------------------------------------------------------------------------------------------
+-- Chama a página do formuário da Matéria
+getMateriaR :: Handler Html
+getMateriaR = do
+    (wid,enc) <- generateFormPost formMat
+    defaultLayout $ widgetBootstrap >> widgetForm MateriaR enc wid "Cadastro de Matérias" "Cadastrar" >> widgetVoltar
+----------------------------------------------------------------------------------------------------------------------------------
+-- Mostra o formuláriod de classes
+getClasseR :: Handler Html
+getClasseR = do
+           (widget, enctype) <- generateFormPost formClasse
+           defaultLayout $ widgetForm ClasseR enctype widget "Classe" "Cadastrar"
+----------------------------------------------------------------------------------------------------------------------------------
+-- Cadastrar classes
+postClasseR :: Handler Html
+postClasseR = do
+            ((result,_),_) <- runFormPost formClasse
+            case result of
+                FormSuccess x -> (runDB $ insert x) >> defaultLayout [whamlet|<h1> Classe inserida|] >>
+                     redirect ClasseR
+                _ -> redirect ClasseR
+
+----------------------------------------------------------------------------------------------------------------------------------
+-- Listar Classes
+getListarClasseR :: Handler Html
+getListarClasseR = do
+                 classe <- runDB $ (rawSql "SELECT ??, ??, ?? \
+                                   \FROM usuario INNER JOIN classe \
+                                   \ON classe.usuario_id=usuario.id \
+                                   \INNER JOIN materia \
+                                   \ON classe.materia_id=materia.id" [])::Handler [(Entity Classe, Entity Usuario, Entity Materia)]
+                 defaultLayout [whamlet|
+                      <body style="background-color: #575757;">
+                      <h1 style="text-align: center;font-size: 20px;color: #ffffff;font-family: century gothic;"> Lista de Classe
+                      $forall (Entity oq _, Entity _ np, Entity _ nm) <- classe
+                          <p style="text-align: center;font-size: 20px;color: #ffffff;font-family: century gothic;"> Classe #{fromSqlKey oq}:  #{usuarioNome np} : #{materiaNome nm}
+                 |]
+----------------------------------------------------------------------------------------------------------------------------------
+-- Formulário da Classe
+formClasse :: Form Classe
+formClasse = renderDivs $ Classe <$>
+             areq (selectField aluno) "Aluno" Nothing <*>
+             areq (selectField materia) "Forn" Nothing
+
+aluno = do
+       entidades <- runDB $ selectList [] [Asc UsuarioNome] 
+       optionsPairs $ fmap (\ent -> (usuarioNome $ entityVal ent, entityKey ent)) entidades
+
+materia = do
+       entidades <- runDB $ selectList [] [Asc MateriaNome] 
+       optionsPairs $ fmap (\ent -> (materiaNome $ entityVal ent, entityKey ent)) entidades
+
+----------------------------------------------------------------------------------------------------------------------------------
+--Listar Materia
+getListarMateriaR :: Handler Html
+getListarMateriaR = do
+                 materia <- runDB $ selectList [] [Asc MateriaNome]
+                 defaultLayout [whamlet|
+                      <body style="background-color: #575757;">
+                      <h1 style="text-align: center;font-size: 20px;color: #ffffff;font-family: century gothic;"> Lista de Matérias
+                      $forall Entity fid fent <- materia
+                          <h2 style="text-align: center;font-size: 14px;color: #ffffff;font-family: century gothic;"> #{materiaNome fent}
+                 |]
+----------------------------------------------------------------------------------------------------------------------------------
+-- Página para cadastrar Matéria
+postMateriaR :: Handler Html
+postMateriaR = do
+    ((result,_),_) <- runFormPost formMat
+    case result of
+        FormSuccess usr -> do
+            runDB $ insert usr
+            setMessage $ [shamlet| <p> Materia inserida com sucesso! |]
+            redirect MateriaR
+        _ -> redirect MateriaR
 ----------------------------------------------------------------------------------------------------------------------------------
 -- HTML básico da página principal
 widget1 :: Widget
