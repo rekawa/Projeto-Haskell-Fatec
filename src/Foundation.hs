@@ -46,7 +46,9 @@ instance Yesod Sitio where
     authRoute _ = Just $ LoginR
     isAuthorized LoginR _ = return Authorized
     isAuthorized AdminR _ = isAdmin
-    isAuthorized UsuarioR _ = return Authorized
+    isAuthorized ClasseR _ = isAdmin
+    isAuthorized MateriaR _ = isAdmin
+    isAuthorized UsuarioR _ = isAdmin
     isAuthorized _ _ = isUser
 
 -- verifica a sessão e as autorizações

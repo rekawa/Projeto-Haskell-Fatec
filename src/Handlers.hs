@@ -217,7 +217,7 @@ widget2 = [whamlet|
               | <li style="font-size:12px;"><a href=@{MateriaR}>CADASTRAR MATERIAS</a>
               | <li style="font-size:12px;"><a href=@{ListarMateriaR}>LISTAR MATERIAS</a>
               | <li style="font-size:12px;"><a href=@{ClasseR}>CADASTRAR CLASSES</a>
-              | <li style="font-size:12px;"><a href=@{ListarClasseR}>CLASSES</a>
+              | <li style="font-size:12px;"><a href=@{ListarClasseR}>LISTAR CLASSES</a>
               | <li style="font-size:12px;"><a href=@{ByeR}>SAIR</a>
         <div id="katana">
         <div id="upperinfo">
