@@ -114,7 +114,9 @@ getListarClasseR = do
                       <body style="background-color: #575757;">
                       <h1 style="text-align: center;font-size: 20px;color: #ffffff;font-family: century gothic;"> Lista de Classe
                       $forall (Entity oq _, Entity _ np, Entity _ nm) <- classe
-                          <p style="text-align: center;font-size: 20px;color: #ffffff;font-family: century gothic;"> Classe #{fromSqlKey oq}:  #{usuarioNome np} : #{materiaNome nm}
+                          <p style="text-align: center;font-size: 14px;color: #ffffff;font-family: century gothic;"> Classe #{fromSqlKey oq}:  #{usuarioNome np} : #{materiaNome nm}
+                      <br>
+                      <h1 style="text-align: center;font-size: 20px;color: #ffffff;font-family: century gothic;"><a href=@{WelcomeR}>Voltar</a>
                  |]
 ----------------------------------------------------------------------------------------------------------------------------------
 -- Formulário da Classe
@@ -141,6 +143,8 @@ getListarMateriaR = do
                       <h1 style="text-align: center;font-size: 20px;color: #ffffff;font-family: century gothic;"> Lista de Matérias
                       $forall Entity fid fent <- materia
                           <h2 style="text-align: center;font-size: 14px;color: #ffffff;font-family: century gothic;"> #{materiaNome fent}
+                      <br>
+                      <h1 style="text-align: center;font-size: 20px;color: #ffffff;font-family: century gothic;"><a href=@{WelcomeR}>Voltar</a>
                  |]
 ----------------------------------------------------------------------------------------------------------------------------------
 -- Página para cadastrar Matéria
@@ -166,7 +170,8 @@ widget1 = [whamlet|
         <div id="menu">
             <ul class="menu">
                 <li><b>HOME</b>
-              | <li><a href=#>EXIBIR</a>
+              | <li><a href=@{ListarMateriaR}>MATERIAS</a>
+              | <li><a href=@{ListarClasseR}>CLASSES</a>
               | <li><a href=@{AdminR}>ADMIN</a>
               | <li><a href=@{ByeR}>SAIR</a>
         <div id="katana">
@@ -190,7 +195,7 @@ widget1 = [whamlet|
 widgetVoltar :: Widget
 widgetVoltar = [whamlet|
 
-<h1 style="color:#FFFFFF"><a href=@{WelcomeR}>Voltar</a>
+<h1 style="color:#FFFFFF;align:center;"><a href=@{WelcomeR}>Voltar</a>
 
 |]
 
@@ -207,9 +212,13 @@ widget2 = [whamlet|
         <div id="menu">
             <ul class="menu">
                 <li><b>ADMIN</b>
-              | <li><a href=@{UsuarioR}>CADASTRAR</a>
-              | <li><a href=@{ListUserR}>LISTAR</a>
-              | <li><a href=@{ByeR}>SAIR</a>
+              | <li style="font-size:12px;"><a href=@{UsuarioR}>CADASTRAR USUARIO</a>
+              | <li style="font-size:12px;"><a href=@{ListUserR}>LISTAR USUARIO</a>
+              | <li style="font-size:12px;"><a href=@{MateriaR}>CADASTRAR MATERIAS</a>
+              | <li style="font-size:12px;"><a href=@{ListarMateriaR}>LISTAR MATERIAS</a>
+              | <li style="font-size:12px;"><a href=@{ClasseR}>CADASTRAR CLASSES</a>
+              | <li style="font-size:12px;"><a href=@{ListarClasseR}>CLASSES</a>
+              | <li style="font-size:12px;"><a href=@{ByeR}>SAIR</a>
         <div id="katana">
         <div id="upperinfo">
         <div id="info1">
