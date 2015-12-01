@@ -15,7 +15,8 @@ data Sitio = Sitio { connPool :: ConnectionPool,
 
 staticFiles "."
 -- esse ponto é a pasta local (linux), se fosse uma pasta externa, colocar o nome da pasta no staticFiles.
-
+--------------------------------------------------------------------------------------------------------------------------------------
+--Esta parte cria as tabelas
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 Usuario
    nome Text
@@ -40,7 +41,7 @@ instance YesodPersist Sitio where
        master <- getYesod
        let pool = connPool master
        runSqlPool f pool
-
+--------------------------------------------------------------------------------------------------------------------------------------
 -- autoriza a entrada
 instance Yesod Sitio where
     authRoute _ = Just $ LoginR
@@ -50,7 +51,7 @@ instance Yesod Sitio where
     isAuthorized MateriaR _ = isAdmin
     isAuthorized UsuarioR _ = isAdmin
     isAuthorized _ _ = isUser
-
+--------------------------------------------------------------------------------------------------------------------------------------
 -- verifica a sessão e as autorizações
 isUser = do
     mu <- lookupSession "_ID"
